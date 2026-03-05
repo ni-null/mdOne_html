@@ -1,0 +1,14 @@
+{
+  "_metadata": {
+    "name": "minimal",
+    "description": "Minimal, modern design with clean typography and spacing",
+    "version": "1.0.0",
+    "schema_version": "v1",
+    "author": "MDOne"
+  },
+
+  "extra_css": [],
+  "extra_js": [],
+
+  "_comment": "Define external CDN resources below. Example: 'https://cdn.jsdelivr.net/npm/highlight.js/styles/atom-one-dark.css'"
+}

@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="{LANG}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{TITLE}</title>
+    <style>
+{CSS_CONTENT}
+    </style>
+{EXTRA_CSS}
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar Navigation -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="sidebar-title">{TITLE}</div>
+                <div class="sidebar-subtitle">{I18N_PAGE_SUBTITLE}</div>
+                <span class="doc-count" id="doc-count">{I18N_LOADING}</span>
+            </div>
+
+            <div class="tab-list">
+{TABS_HTML}
+            </div>
+
+            <div class="sidebar-footer">
+                {I18N_FOOTER_LABEL}
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <header>
+                <button class="menu-btn" id="menu-btn" title="{I18N_MENU_OPEN_TITLE}">☰</button>
+                <div class="header-title">{TITLE}</div>
+                <div class="topbar-breadcrumb">
+                    <span>{I18N_BREADCRUMB_DOCS}</span>
+                    <span class="breadcrumb-sep">/</span>
+                    <span class="breadcrumb-current" id="breadcrumb-current">{I18N_BREADCRUMB_INDEX}</span>
+                </div>
+                <div class="topbar-status">
+                    <div class="status-badge">
+                        <div class="status-dot"></div>
+                        <span>{I18N_STATUS_OFFLINE}</span>
+                    </div>
+                    <button class="theme-toggle" id="theme-toggle" title="{I18N_THEME_TOGGLE_TITLE}">
+                        <span class="theme-icon" id="theme-icon">☀</span>
+                        <span class="theme-label" id="theme-label">{I18N_THEME_LIGHT_LABEL}</span>
+                    </button>
+                </div>
+            </header>
+
+            <div class="content-area" id="content-area">
+{CONTENT_HTML}
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ── Mobile menu toggle ──
+        const menuBtn = document.getElementById('menu-btn');
+        const sidebar = document.querySelector('.sidebar');
+        
+        if (menuBtn) {
+            menuBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('active');
+            });
+        }
+        
+        // Close sidebar when clicking content
+        document.querySelector('.content-area').addEventListener('click', () => {
+            if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+
+        // ── Theme toggle ──
+        const html = document.documentElement;
+        const themeBtn = document.getElementById('theme-toggle');
+        const themeIcon = document.getElementById('theme-icon');
+        const themeLabel = document.getElementById('theme-label');
+        let isDark = false;
+        
+        // Initialize theme from config
+{THEME_INIT}
+
+        themeBtn.addEventListener('click', () => {
+            isDark = !isDark;
+            if (isDark) {
+                html.removeAttribute('data-theme');
+                themeIcon.textContent = '☀';
+                themeLabel.textContent = '{I18N_THEME_LIGHT_LABEL}';
+            } else {
+                html.setAttribute('data-theme', 'light');
+                themeIcon.textContent = '☾';
+                themeLabel.textContent = '{I18N_THEME_DARK_LABEL}';
+            }
+        });
+
+        // ── Tab switching ──
+        const buttons = document.querySelectorAll('.tab-button');
+        const contents = document.querySelectorAll('.tab-content');
+        const breadcrumb = document.getElementById('breadcrumb-current');
+        const docCount = document.getElementById('doc-count');
+        const i18n_suffix = '{I18N_DOC_COUNT_SUFFIX}';
+
+        docCount.textContent = buttons.length + ' ' + i18n_suffix;
+
+        buttons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                const tab = this.getAttribute('data-tab');
+
+                contents.forEach(c => c.classList.remove('active'));
+                buttons.forEach(b => b.classList.remove('active'));
+
+                document.querySelector(`.tab-content[data-tab="${tab}"]`).classList.add('active');
+                this.classList.add('active');
+
+                breadcrumb.textContent = tab;
+                
+                // Close sidebar on mobile after selection
+                if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            });
+        });
+    </script>
+{EXTRA_JS}
+</body>
+</html>

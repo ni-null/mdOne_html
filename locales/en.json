@@ -1,0 +1,65 @@
+{
+  "_comment": "MDOne HTML Packager — i18n resource file",
+  "_locale": "en",
+
+  "cli": {
+    "_comment": "Strings used by the packager tool itself (CLI output, error messages)",
+
+    "app_title": "🚀 MDOne HTML Packager",
+    "config_header": "Configuration:",
+    "config_source": "  Markdown source : {value}",
+    "config_output": "  Output file     : {value}",
+    "config_template": "  Template        : {value}",
+    "config_minify": "  HTML minify     : {value}",
+    "config_minify_on": "enabled ✓",
+    "config_minify_off": "disabled ✗",
+    "config_extensions": "  MD extensions   : {value}",
+    "config_locale": "  Locale          : {value}",
+
+    "err_no_templates": "❌ No templates found.",
+    "err_no_templates_hint": "  Create a template under {dir}/",
+    "err_template_not_found": "❌ Template '{name}' does not exist.",
+    "err_available_templates": "  Available templates: {list}",
+    "err_load_template": "❌ Failed to load template: {error}",
+    "err_no_md_files": "❌ No Markdown files found.",
+    "err_no_md_files_hint": "  Make sure {dir} contains .md files.",
+    "err_md_dir_missing": "❌ Markdown source directory not found: {dir}",
+    "err_read_failed": "❌ Failed to read file: {path} — {error}",
+    "err_no_content": "❌ No Markdown content was generated.",
+    "err_write_failed": "❌ Failed to write output file: {error}",
+    "warn_config_failed": "⚠️  Could not load config: {error}. Using defaults.",
+
+    "using_template": "✅ Template : {name}",
+    "found_md_files": "✅ Found {n} Markdown file(s):",
+    "generating": "⏳ Generating HTML...",
+
+    "success": "✅ Done!",
+    "output_file_label": "  Output file : {value}",
+    "output_size_label": "  File size   : {value} KB",
+
+    "usage_header": "📖 How to use:",
+    "usage_open": "  1. Open {file} in your browser",
+    "usage_tabs": "  2. Click tabs in the sidebar to switch documents",
+    "usage_offline": "  3. Fully offline — no internet required",
+
+    "available_templates_header": "🎨 Available templates:",
+    "template_marker": "→"
+  },
+
+  "template": {
+    "_comment": "UI strings injected into the HTML output via {I18N_*} placeholders",
+
+    "html_lang": "en",
+    "page_subtitle": "Documentation",
+    "loading": "Loading...",
+    "footer_label": "Offline · {BUILD_DATE}",
+    "menu_open_title": "Open sidebar",
+    "breadcrumb_docs": "docs",
+    "breadcrumb_index": "index",
+    "status_offline": "OFFLINE READY",
+    "theme_light_label": "Light",
+    "theme_dark_label": "Dark",
+    "theme_toggle_title": "Toggle theme",
+    "doc_count_suffix": "doc(s)"
+  }
+}

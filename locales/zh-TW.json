@@ -1,0 +1,65 @@
+{
+  "_comment": "MDOne HTML Packager — i18n 語系資源檔",
+  "_locale": "zh-TW",
+
+  "cli": {
+    "_comment": "工具本身使用的字串（CLI 輸出、錯誤訊息）",
+
+    "app_title": "🚀 MDOne HTML 文檔打包器",
+    "config_header": "目前設定：",
+    "config_source": "  Markdown 來源 : {value}",
+    "config_output": "  輸出檔案     : {value}",
+    "config_template": "  模板         : {value}",
+    "config_minify": "  HTML 壓縮     : {value}",
+    "config_minify_on": "已啟用 ✓",
+    "config_minify_off": "已停用 ✗",
+    "config_extensions": "  MD 擴展      : {value}",
+    "config_locale": "  語系         : {value}",
+
+    "err_no_templates": "❌ 找不到任何模板。",
+    "err_no_templates_hint": "  請在 {dir}/ 目錄下建立模板。",
+    "err_template_not_found": "❌ 模板 '{name}' 不存在。",
+    "err_available_templates": "  可用模板：{list}",
+    "err_load_template": "❌ 載入模板失敗：{error}",
+    "err_no_md_files": "❌ 找不到 Markdown 檔案。",
+    "err_no_md_files_hint": "  請確認 {dir} 目錄下有 .md 檔案。",
+    "err_md_dir_missing": "❌ Markdown 來源目錄不存在：{dir}",
+    "err_read_failed": "❌ 讀取失敗：{path} — {error}",
+    "err_no_content": "❌ 未產生任何 Markdown 內容。",
+    "err_write_failed": "❌ 寫入輸出檔案失敗：{error}",
+    "warn_config_failed": "⚠️  無法讀取設定：{error}，使用預設值。",
+
+    "using_template": "✅ 模板：{name}",
+    "found_md_files": "✅ 找到 {n} 個 Markdown 檔案：",
+    "generating": "⏳ 正在生成 HTML…",
+
+    "success": "✅ 完成！",
+    "output_file_label": "  輸出檔案 : {value}",
+    "output_size_label": "  檔案大小 : {value} KB",
+
+    "usage_header": "📖 使用方式：",
+    "usage_open": "  1. 用瀏覽器開啟 {file}",
+    "usage_tabs": "  2. 點擊左側頁籤切換文件",
+    "usage_offline": "  3. 支援完全離線使用",
+
+    "available_templates_header": "🎨 可用模板：",
+    "template_marker": "→"
+  },
+
+  "template": {
+    "_comment": "注入到輸出 HTML 的 UI 字串，對應模板中的 {I18N_*} 佔位符",
+
+    "html_lang": "zh-TW",
+    "page_subtitle": "系統交接文檔",
+    "loading": "載入中…",
+    "footer_label": "離線版本 · {BUILD_DATE}",
+    "menu_open_title": "開啟側邊欄",
+    "breadcrumb_docs": "文件",
+    "breadcrumb_index": "索引",
+    "status_offline": "OFFLINE READY",
+    "theme_light_label": "日間",
+    "theme_dark_label": "夜間",
+    "theme_toggle_title": "切換日夜模式",
+    "doc_count_suffix": "份文檔"
+  }
+}
