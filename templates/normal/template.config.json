@@ -7,9 +7,15 @@
     "author": "MDOne"
   },
 
+  "toc": {
+    "enabled": true,
+    "levels": [2, 3]
+  },
+
   "extra_css": [],
   "extra_js": [],
 
+  "_comment_toc": "Enable table of contents in sidebar. levels: array of heading levels to include (e.g. [2, 3] for h2-h3). Set enabled to false to disable TOC.",
   "_comment_extra_css": "List of external CSS URLs to inject into <head>. Example: ['https://cdn.jsdelivr.net/npm/highlight.js/styles/github.css']",
   "_comment_extra_js": "List of external JS URLs to inject before </body>. Example: ['https://cdn.jsdelivr.net/npm/highlight.js/highlight.min.js']"
 }

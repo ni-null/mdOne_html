@@ -1,132 +1,233 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="{LANG}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{TITLE}</title>
     <style>
-{CSS_CONTENT}
+      {CSS_CONTENT}
     </style>
-{EXTRA_CSS}
-</head>
-<body>
+    {EXTRA_CSS}
+  </head>
+  <body>
     <div class="container">
-        <!-- Sidebar -->
-        <aside class="sidebar">
-            <div class="sidebar-header">
-                <div class="sidebar-logo">
-                    <div class="logo-mark"></div>
-                    <div class="logo-text"><span>{TITLE}</span>·SYS</div>
-                </div>
-                <div class="sidebar-subtitle">{I18N_PAGE_SUBTITLE}</div>
-                <div style="margin-top:10px">
-                    <span class="doc-count" id="doc-count">{I18N_LOADING}</span>
-                </div>
-            </div>
-
-            <div class="tab-list">
-{TABS_HTML}
-            </div>
-
-            <div class="sidebar-footer">
-                {I18N_FOOTER_LABEL}
-            </div>
-        </aside>
-
-        <!-- Main -->
-        <div class="main-content">
-            <div class="topbar">
-                <button class="menu-btn" id="menu-btn" title="{I18N_MENU_OPEN_TITLE}">☰</button>
-                <div class="topbar-breadcrumb">
-                    <span>{TITLE}</span>
-                    <span class="breadcrumb-sep">›</span>
-                    <span>{I18N_BREADCRUMB_DOCS}</span>
-                    <span class="breadcrumb-sep">›</span>
-                    <span class="breadcrumb-current" id="breadcrumb-current">{I18N_BREADCRUMB_INDEX}</span>
-                </div>
-                <div class="topbar-status">
-                    <div class="status-badge">
-                        <div class="status-dot"></div>
-                        <span>{I18N_STATUS_OFFLINE}</span>
-                    </div>
-                    <button class="theme-toggle" id="theme-toggle" title="{I18N_THEME_TOGGLE_TITLE}">
-                        <span class="theme-icon" id="theme-icon">☀</span>
-                        <span class="theme-label" id="theme-label">{I18N_THEME_LIGHT_LABEL}</span>
-                    </button>
-                </div>
-            </div>
-
-            <div class="content-area" id="content-area">
-{CONTENT_HTML}
-            </div>
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-logo">
+            <div class="logo-mark"></div>
+            <div class="logo-text"><span>{TITLE}</span>·SYS</div>
+          </div>
+          <div class="sidebar-subtitle" id="sidebar-subtitle"></div>
+          <div style="margin-top: 10px">
+            <span class="doc-count" id="doc-count"></span>
+          </div>
         </div>
+
+        <div class="tab-list" id="tab-list"></div>
+
+        <div class="sidebar-footer" id="sidebar-footer"></div>
+      </aside>
+
+      <!-- Main -->
+      <div class="main-content">
+        <div class="topbar">
+          <button class="menu-btn" id="menu-btn" title="">☰</button>
+          <div class="topbar-breadcrumb">
+            <span>{TITLE}</span>
+            <span class="breadcrumb-sep">›</span>
+            <span id="breadcrumb-docs"></span>
+            <span class="breadcrumb-sep">›</span>
+            <span class="breadcrumb-current" id="breadcrumb-current"></span>
+          </div>
+          <div class="topbar-status">
+            <div class="status-badge">
+              <div class="status-dot"></div>
+              <span id="status-offline"></span>
+            </div>
+            <button class="theme-toggle" id="theme-toggle" title="">
+              <span class="theme-icon" id="theme-icon">☀</span>
+              <span class="theme-label" id="theme-label"></span>
+            </button>
+          </div>
+        </div>
+
+        <div class="content-area" id="content-area"></div>
+      </div>
     </div>
 
+    {MDONE_DATA_SCRIPT}
     <script>
-        // ── Menu toggle ──
-        const menuBtn = document.getElementById('menu-btn');
-        const sidebar = document.querySelector('.sidebar');
-        
-        if (menuBtn) {
-            menuBtn.addEventListener('click', () => {
-                sidebar.classList.toggle('active');
-                menuBtn.textContent = sidebar.classList.contains('active') ? '✕' : '☰';
-            });
+      // ── Main rendering function ──
+      async function renderApp(data) {
+        if (!data || !data.docs || !data.config || !data.i18n) {
+          console.error("Invalid MDOne_DATA structure")
+          return
         }
-        
-        // Close sidebar when clicking on content area on mobile
-        document.querySelector('.content-area').addEventListener('click', () => {
-            if (window.innerWidth <= 768 && sidebar.classList.contains('active')) {
-                sidebar.classList.remove('active');
-                if (menuBtn) menuBtn.textContent = '☰';
-            }
-        });
+
+        const { docs, config, i18n } = data
+        const sidebar = document.querySelector(".sidebar")
+        const menuBtn = document.getElementById("menu-btn")
+        const tabList = document.getElementById("tab-list")
+        const contentArea = document.getElementById("content-area")
+        const html = document.documentElement
+
+        // Initialize i18n elements
+        document.getElementById("sidebar-subtitle").textContent = i18n.page_subtitle || ""
+        document.getElementById("sidebar-footer").textContent = i18n.footer_label || ""
+        document.getElementById("breadcrumb-docs").textContent = i18n.breadcrumb_docs || ""
+        document.getElementById("status-offline").textContent = i18n.status_offline || ""
+        document.getElementById("menu-btn").title = i18n.menu_open_title || ""
+        document.getElementById("theme-toggle").title = i18n.theme_toggle_title || ""
+
+        // Render sidebar tabs and content areas
+        docs.forEach((doc, idx) => {
+          // Tab button
+          const btn = document.createElement("button")
+          btn.className = "tab-button" + (idx === 0 ? " active" : "")
+          btn.setAttribute("data-tab", doc.id)
+          btn.innerHTML = `<span class="tab-icon">◈</span><span class="tab-label">${doc.title}</span><span class="tab-indicator"></span>`
+          tabList.appendChild(btn)
+
+          // TOC nav (placeholder)
+          const nav = document.createElement("nav")
+          nav.className = "toc-nav" + (idx === 0 ? " open" : "")
+          nav.setAttribute("data-tab", doc.id)
+          tabList.appendChild(nav)
+
+          // Content div
+          const content = document.createElement("div")
+          content.className = "tab-content" + (idx === 0 ? " active" : "")
+          content.setAttribute("data-tab", doc.id)
+          content.innerHTML = doc.html
+          contentArea.appendChild(content)
+        })
+
+        // Update doc count
+        const i18n_suffix = i18n.doc_count_suffix || "doc(s)"
+        document.getElementById("doc-count").textContent = docs.length + " " + i18n_suffix
+
+        // Initialize breadcrumb
+        if (docs.length > 0) {
+          document.getElementById("breadcrumb-current").textContent = docs[0].name
+        }
+
+        // ── Menu toggle ──
+        if (menuBtn) {
+          menuBtn.addEventListener("click", () => {
+            sidebar.classList.toggle("active")
+            menuBtn.textContent = sidebar.classList.contains("active") ? "✕" : "☰"
+          })
+        }
+
+        document.getElementById("content-area").addEventListener("click", () => {
+          if (window.innerWidth <= 768 && sidebar.classList.contains("active")) {
+            sidebar.classList.remove("active")
+            if (menuBtn) menuBtn.textContent = "☰"
+          }
+        })
 
         // ── Theme toggle ──
-        const html = document.documentElement;
-        const themeBtn = document.getElementById('theme-toggle');
-        const themeIcon = document.getElementById('theme-icon');
-        const themeLabel = document.getElementById('theme-label');
-        let isDark = false;
-        // Initialize theme from config
-{THEME_INIT}
+        const themeBtn = document.getElementById("theme-toggle")
+        const themeIcon = document.getElementById("theme-icon")
+        const themeLabel = document.getElementById("theme-label")
+        let isDark = config.theme_mode === "dark"
 
-        themeBtn.addEventListener('click', () => {
-            isDark = !isDark;
-            if (isDark) {
-                html.removeAttribute('data-theme');
-                themeIcon.textContent = '☀';
-                themeLabel.textContent = '{I18N_THEME_LIGHT_LABEL}';
-            } else {
-                html.setAttribute('data-theme', 'light');
-                themeIcon.textContent = '☾';
-                themeLabel.textContent = '{I18N_THEME_DARK_LABEL}';
-            }
-        });
+        function updateThemeUI() {
+          if (isDark) {
+            html.removeAttribute("data-theme")
+            themeIcon.textContent = "☀"
+            themeLabel.textContent = i18n.theme_light_label || "Light"
+          } else {
+            html.setAttribute("data-theme", "light")
+            themeIcon.textContent = "☾"
+            themeLabel.textContent = i18n.theme_dark_label || "Dark"
+          }
+        }
+        updateThemeUI()
+
+        themeBtn.addEventListener("click", () => {
+          isDark = !isDark
+          updateThemeUI()
+        })
+
+        // ── TOC (Table of Contents) ──
+        function buildTOC(tabName) {
+          if (!config.toc || !config.toc.enabled) return
+
+          const nav = document.querySelector(`.toc-nav[data-tab="${tabName}"]`)
+          if (!nav || nav.children.length > 0) return // already built
+
+          const levels = config.toc.levels || [2, 3]
+          const content = document.querySelector(`.tab-content[data-tab="${tabName}"]`)
+          if (!content) return
+
+          const selector = levels.map((l) => `h${l}`).join(",")
+          const headings = content.querySelectorAll(selector)
+          if (headings.length === 0) return
+
+          let html = '<ul class="toc-list">'
+          headings.forEach((h) => {
+            const level = parseInt(h.tagName[1])
+            const id = h.id || ""
+            const text = h.textContent
+            if (id) html += `<li class="toc-item toc-h${level}"><a href="#${id}">${text}</a></li>`
+          })
+          html += "</ul>"
+          nav.innerHTML = html
+        }
+
+        function switchTOC(activeTab) {
+          // Collapse all TOC navs
+          document.querySelectorAll(".toc-nav").forEach((n) => n.classList.remove("open"))
+          // Build (lazy) then expand active
+          buildTOC(activeTab)
+          const activeNav = document.querySelector(`.toc-nav[data-tab="${activeTab}"]`)
+          if (activeNav && activeNav.children.length > 0) activeNav.classList.add("open")
+        }
 
         // ── Tab switching ──
-        const buttons = document.querySelectorAll('.tab-button');
-        const contents = document.querySelectorAll('.tab-content');
-        const breadcrumb = document.getElementById('breadcrumb-current');
-        const docCount = document.getElementById('doc-count');
-        const i18n_suffix = '{I18N_DOC_COUNT_SUFFIX}';
+        const buttons = document.querySelectorAll(".tab-button")
+        const contents = document.querySelectorAll(".tab-content")
+        const breadcrumb = document.getElementById("breadcrumb-current")
 
-        docCount.textContent = buttons.length + ' ' + i18n_suffix;
+        buttons.forEach((btn) => {
+          btn.addEventListener("click", function () {
+            const tab = this.getAttribute("data-tab")
+            const isAlreadyActive = this.classList.contains("active")
 
-        buttons.forEach(btn => {
-            btn.addEventListener('click', function () {
-                const tab = this.getAttribute('data-tab');
+            // If clicking the already-active tab, toggle its TOC
+            if (isAlreadyActive) {
+              const nav = document.querySelector(`.toc-nav[data-tab="${tab}"]`)
+              if (nav && nav.children.length > 0) nav.classList.toggle("open")
+              return
+            }
 
-                contents.forEach(c => c.classList.remove('active'));
-                buttons.forEach(b => b.classList.remove('active'));
+            contents.forEach((c) => c.classList.remove("active"))
+            buttons.forEach((b) => b.classList.remove("active"))
 
-                document.querySelector(`.tab-content[data-tab="${tab}"]`).classList.add('active');
-                this.classList.add('active');
+            document.querySelector(`.tab-content[data-tab="${tab}"]`).classList.add("active")
+            this.classList.add("active")
 
-                breadcrumb.textContent = tab;
-            });
-        });
+            // Find doc name for breadcrumb
+            const doc = docs.find((d) => d.id === tab)
+            if (doc) breadcrumb.textContent = doc.name
+
+            switchTOC(tab)
+          })
+        })
+
+        // Initialize TOC for first tab
+        if (docs.length > 0) {
+          switchTOC(docs[0].id)
+        }
+      }
+
+      // Wait for window.MDOne_DATA to be set, then render
+      if (window.MDOne_DATA) {
+        renderApp(window.MDOne_DATA)
+      }
     </script>
-{EXTRA_JS}
-</body>
+    {EXTRA_JS}
+  </body>
 </html>

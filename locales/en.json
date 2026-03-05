@@ -60,6 +60,7 @@
     "theme_light_label": "Light",
     "theme_dark_label": "Dark",
     "theme_toggle_title": "Toggle theme",
-    "doc_count_suffix": "doc(s)"
+    "doc_count_suffix": "doc(s)",
+    "toc_title": "On this page"
   }
 }
