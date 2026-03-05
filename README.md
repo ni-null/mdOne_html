@@ -1,4 +1,4 @@
-# mdOne_html
+# MDOne HTML
 
 A lightweight Markdown bundler that compiles multiple files into a single, self-contained HTML document.
 
