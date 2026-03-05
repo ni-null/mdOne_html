@@ -10,8 +10,8 @@ A lightweight Markdown bundler that compiles multiple files into a single, self-
 
 ```bash
 # 1. Clone
-git clone https://github.com/your-repo/mdone-html.git
-cd mdone-html
+git clone https://github.com/ni-null/mdOne_html.git
+cd mdOne_html
 
 # 2. Install dependencies
 pip install python-dotenv markdown
