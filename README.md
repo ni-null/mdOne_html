@@ -1,8 +1,9 @@
 # MDOne HTML
 
-A lightweight Markdown bundler that compiles multiple files into a single, self-contained HTML document.
 
-一款輕量的 Markdown 打包工具，可將多個檔案編譯成一個獨立的 HTML 文件。
+A lightweight Markdown bundler that compiles multiple files into a single, self-contained HTML document — no server required, open it locally on any device.
+
+一款輕量的 Markdown 打包工具，將多個檔案編譯成單一 HTML 文件，無須伺服器，任何裝置皆可在本地直接開啟。
 
 <img width="1365" height="831" alt="Preview" src="https://github.com/user-attachments/assets/1fb774d6-0554-43ef-89e2-433f241df411" />
 
