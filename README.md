@@ -16,7 +16,7 @@ git clone https://github.com/ni-null/mdOne_html.git
 cd mdOne_html
 
 # 2. Install dependencies
-pip install python-dotenv markdown
+pip install -r requirements.txt
 
 # 3. Run
 python main.py --template minimal --output output.html --source ./docs
