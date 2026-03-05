@@ -207,12 +207,22 @@ def load_template(template_name):
     template_metadata = {}
     toc_config = {"enabled": False, "levels": [2, 3]}  # Default TOC config
 
+    extra_css_inline = []
+    extra_js_inline = []
+
     if config_file.exists():
         try:
             with open(config_file, "r", encoding="utf-8") as f:
                 template_config = json.load(f)
-                extra_css_urls = template_config.get("extra_css", [])
-                extra_js_urls = template_config.get("extra_js", [])
+                # New fields (preferred); fall back to legacy extra_css/extra_js for backward compat
+                extra_css_urls = template_config.get(
+                    "extra_css_urls", template_config.get("extra_css", [])
+                )
+                extra_js_urls = template_config.get(
+                    "extra_js_urls", template_config.get("extra_js", [])
+                )
+                extra_css_inline = template_config.get("extra_css_inline", [])
+                extra_js_inline = template_config.get("extra_js_inline", [])
                 template_metadata = template_config.get("_metadata", {})
                 template_version = template_metadata.get("version", "1.0.0")
                 schema_version = template_metadata.get("schema_version", "v1")
@@ -223,8 +233,11 @@ def load_template(template_name):
     return {
         "css": css_content,
         "template": html_template,
-        "extra_css": extra_css_urls,
-        "extra_js": extra_js_urls,
+        "extra_css_urls": extra_css_urls,
+        "extra_css_inline": extra_css_inline,
+        "extra_js_urls": extra_js_urls,
+        "extra_js_inline": extra_js_inline,
+        "template_dir": template_dir,
         "version": template_version,
         "schema_version": schema_version,
         "metadata": template_metadata,
@@ -378,26 +391,70 @@ def minify_html(html_content):
     return html_content
 
 
-def generate_extra_css_tags(extra_css_urls):
-    """Generate <link> tags for extra CSS"""
-    if not extra_css_urls:
-        return ""
+def generate_extra_css_tags(extra_css_urls, extra_css_inline=None, template_dir=None):
+    """Generate <link> tags for CDN CSS and <style> blocks for inline CSS files.
 
+    Args:
+        extra_css_urls: List of external CDN URLs → <link rel="stylesheet" href="...">
+        extra_css_inline: List of filenames relative to template_dir → inlined <style> blocks
+        template_dir: Path to the template folder (required when extra_css_inline is used)
+    """
     tags = []
-    for url in extra_css_urls:
+
+    # CDN / external URLs
+    for url in extra_css_urls or []:
         tags.append(f'    <link rel="stylesheet" href="{url}">')
+
+    # Inline files
+    for filename in extra_css_inline or []:
+        if not template_dir:
+            logger.warning(
+                f"extra_css_inline: template_dir not provided, skipping '{filename}'"
+            )
+            continue
+        css_path = Path(template_dir) / filename
+        if not css_path.exists():
+            logger.warning(f"extra_css_inline: file not found '{css_path}', skipping")
+            continue
+        try:
+            content = css_path.read_text(encoding="utf-8")
+            tags.append(f"    <style>/* {filename} */\n{content}\n    </style>")
+        except Exception as e:
+            logger.warning(f"extra_css_inline: failed to read '{css_path}': {e}")
 
     return "\n".join(tags)
 
 
-def generate_extra_js_tags(extra_js_urls):
-    """Generate <script> tags for extra JS"""
-    if not extra_js_urls:
-        return ""
+def generate_extra_js_tags(extra_js_urls, extra_js_inline=None, template_dir=None):
+    """Generate <script src> tags for CDN JS and inline <script> blocks for local JS files.
 
+    Args:
+        extra_js_urls: List of external CDN URLs → <script src="..."></script>
+        extra_js_inline: List of filenames relative to template_dir → inlined <script> blocks
+        template_dir: Path to the template folder (required when extra_js_inline is used)
+    """
     tags = []
-    for url in extra_js_urls:
+
+    # CDN / external URLs
+    for url in extra_js_urls or []:
         tags.append(f'    <script src="{url}"></script>')
+
+    # Inline files
+    for filename in extra_js_inline or []:
+        if not template_dir:
+            logger.warning(
+                f"extra_js_inline: template_dir not provided, skipping '{filename}'"
+            )
+            continue
+        js_path = Path(template_dir) / filename
+        if not js_path.exists():
+            logger.warning(f"extra_js_inline: file not found '{js_path}', skipping")
+            continue
+        try:
+            content = js_path.read_text(encoding="utf-8")
+            tags.append(f"    <script>/* {filename} */\n{content}\n    </script>")
+        except Exception as e:
+            logger.warning(f"extra_js_inline: failed to read '{js_path}': {e}")
 
     return "\n".join(tags)
 
@@ -475,9 +532,18 @@ def generate_html(md_files, template_data):
     )
     html_output = html_output.replace("{CSS_CONTENT}", template_data["css"])
 
-    # Generate and inject extra CSS/JS
-    extra_css_html = generate_extra_css_tags(template_data.get("extra_css", []))
-    extra_js_html = generate_extra_js_tags(template_data.get("extra_js", []))
+    # Generate and inject extra CSS/JS (CDN URLs + inline files)
+    template_dir = template_data.get("template_dir")
+    extra_css_html = generate_extra_css_tags(
+        template_data.get("extra_css_urls", []),
+        template_data.get("extra_css_inline", []),
+        template_dir,
+    )
+    extra_js_html = generate_extra_js_tags(
+        template_data.get("extra_js_urls", []),
+        template_data.get("extra_js_inline", []),
+        template_dir,
+    )
 
     html_output = html_output.replace("{EXTRA_CSS}", extra_css_html)
     html_output = html_output.replace("{EXTRA_JS}", extra_js_html)

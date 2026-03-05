@@ -12,10 +12,14 @@
     "levels": [2, 3]
   },
 
-  "extra_css": [],
-  "extra_js": [],
+  "extra_css_urls": [],
+  "extra_css_inline": [],
+  "extra_js_urls": [],
+  "extra_js_inline": [],
 
   "_comment_toc": "Enable table of contents in sidebar. levels: array of heading levels to include (e.g. [2, 3] for h2-h3). Set enabled to false to disable TOC.",
-  "_comment_extra_css": "List of external CSS URLs to inject into <head>. Example: ['https://cdn.jsdelivr.net/npm/highlight.js/styles/github.css']",
-  "_comment_extra_js": "List of external JS URLs to inject before </body>. Example: ['https://cdn.jsdelivr.net/npm/highlight.js/highlight.min.js']"
+  "_comment_extra_css_urls": "CDN/external CSS URLs injected as <link rel='stylesheet'> in <head>. Example: ['https://cdn.jsdelivr.net/npm/highlight.js/styles/github.css']",
+  "_comment_extra_css_inline": "Local CSS filenames (relative to this template folder) to inline as <style> blocks. Example: ['custom.css']",
+  "_comment_extra_js_urls": "CDN/external JS URLs injected as <script src='...'> before </body>. Example: ['https://cdn.jsdelivr.net/npm/highlight.js/highlight.min.js']",
+  "_comment_extra_js_inline": "Local JS filenames (relative to this template folder) to inline as <script> blocks. Example: ['analytics.js']"
 }
