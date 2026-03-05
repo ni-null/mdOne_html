@@ -242,6 +242,25 @@ def markdown_to_html(markdown_text):
         html
     )
     
+    # Escape { and } inside <code> blocks so they are never mistaken for
+    # template placeholders during str.replace() substitution in generate_html().
+    def escape_braces_in_code(match):
+        inner = match.group(1)
+        inner = inner.replace('{', '&#123;').replace('}', '&#125;')
+        return f'<code>{inner}</code>'
+    html = re.sub(r'<code>(.*?)</code>', escape_braces_in_code, html, flags=re.DOTALL)
+
+    # Escape <script> and <link> tag text inside <td> and <code> blocks.
+    # Cloudflare and other CDN proxies detect literal <script> strings in HTML
+    # and inject real executable script tags in their place, breaking JS parsing.
+    # We replace them with HTML entities so they render as plain text safely.
+    def escape_tags_in_cell(match):
+        inner = match.group(1)
+        inner = re.sub(r'<(/?script)', r'&lt;\1', inner, flags=re.IGNORECASE)
+        inner = re.sub(r'<(/?link)', r'&lt;\1', inner, flags=re.IGNORECASE)
+        return f'<td>{inner}</td>'
+    html = re.sub(r'<td>(.*?)</td>', escape_tags_in_cell, html, flags=re.DOTALL)
+
     return html
 
 def minify_html(html_content):
@@ -537,6 +556,10 @@ ENVIRONMENT VARIABLES:
     # Write output
     try:
         output_file = CONFIG['output_file']
+        # Ensure parent directory exists
+        output_path = Path(output_file)
+        if output_path.parent != Path('.'):
+            output_path.parent.mkdir(parents=True, exist_ok=True)
         with open(output_file, 'w', encoding='utf-8') as f:
             f.write(html_content)
         
