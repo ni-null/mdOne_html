@@ -2,6 +2,12 @@
 
 A lightweight document packager that converts Markdown files into a single, self-contained HTML file with multi-language support and customizable templates.
 
+
+<img width="1365" height="831" alt="Snipaste_2026-03-05_17-13-27" src="https://github.com/user-attachments/assets/1fb774d6-0554-43ef-89e2-433f241df411" />
+
+
+
+
 ## Features
 
 - 📦 **Single-file Output** - Package multiple Markdown documents into one self-contained HTML file (offline-friendly)
